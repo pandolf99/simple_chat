@@ -35,7 +35,6 @@ int main(int argc, char *argv[]) {
   }
   //Loop to send messages to server.
   int true = 1;
-  fflush(stdout);
   int r = fork();
   if (r > 0) {
     while(true) {
@@ -43,14 +42,18 @@ int main(int argc, char *argv[]) {
       printf("You:\n");
       fgets(message, MSGLEN, stdin);
       char *send_buf = pack(usr, message);
-      write(peerfd, send_buf, sizeof(char)*(MSGLEN+USRLEN));
+      if (write(peerfd, send_buf, sizeof(char)*(MSGLEN+USRLEN)) <= 0) {
+        perror("Client: Writing");
+      }
       free(send_buf);
     }
   }
   else if (r == 0){
     while(true) {
       char recieve_buf[(USRLEN + MSGLEN)];
-      read(peerfd, recieve_buf, sizeof(char)*(USRLEN + MSGLEN));
+      if (read(peerfd, recieve_buf, sizeof(char)*(USRLEN + MSGLEN)) <= 0) {
+        perror("Client: Reading");
+      };
       char **split_buf = unpack(recieve_buf);
       printf("%s:\n %s", split_buf[0], split_buf[1]);
       printf("You:\n");

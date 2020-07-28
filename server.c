@@ -61,7 +61,9 @@ int main(int argc, char *argv[]) {
     				}
             for( int j = 3; j <= max_fd; j++) {
               if (j == serverfd || j == i) continue;
-              write(j, buf, sizeof(char)*(MSGLEN+USRLEN));
+              if (write(j, buf, sizeof(char)*(MSGLEN+USRLEN)) <= 0) {
+                perror("Server: Write");
+              }
             }
           }
     }
