@@ -5,7 +5,7 @@
 #include <arpa/inet.h>     /* inet_ntoa */
 #include <netdb.h>         /* gethostname */
 #include <sys/socket.h>
-
+#define h_addr h_addr_list[0] /* for backward compatibility */
 #include "socket.h"
 
 /*

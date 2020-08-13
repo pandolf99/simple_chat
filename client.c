@@ -33,6 +33,7 @@ int main(int argc, char *argv[]) {
   int usr_len = strlen(temp_usr) + 1;
   char usr[usr_len];
   strncpy(usr, temp_usr, sizeof(char)*usr_len);
+  usr[strlen(usr) - 1] = '\0';
   free(temp_usr);
   //Connect to server
   port = strtol(argv[1], NULL, 0);

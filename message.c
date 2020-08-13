@@ -10,8 +10,7 @@ Assume that length is 4 digits or less.
 */
 
 char *pack(char *usr, char *msg) {
-  //Remove newline chars
-  usr[strlen(usr) - 1] = '\0';
+  //Remove newline char
   msg[strlen(msg) - 1] = '\0';
   //Formatting
   int len = strlen(usr) + strlen(msg) + 3;
