@@ -7,13 +7,14 @@
 #include <sys/types.h>
 #include "socket.h"
 #include "message.h"
+#include "sig_hand.h"
 
 int main(int argc, char *argv[]) {
   int port;
 	char hostname[32];
   //Check imputs
 	if (argc < 2 || argc > 3) {
-		fprintf(stderr, "Usage: %s port [hostname]\n", argv[0]);
+    fprintf(stderr, "Usage: %s port [hostname]\n", argv[0]);
 		exit(1);
 	}
 	if (argc == 3) {
@@ -42,6 +43,9 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Error connecting to the gateway!\n");
     exit(1);
   }
+  //Call handler to exit safely
+  sig_action(peerfd);
+
   int true = 1;
   int r = fork();
   //parent sends message to server

@@ -1,5 +1,5 @@
 FLAGS = -Wall -g -std=gnu99
-CLIENT = socket.o message.o
+CLIENT = socket.o message.o sig_hand.o
 SERVER = socket.o message.o
 
 all: server client
@@ -20,6 +20,8 @@ client.o : client.c message.h socket.h
 message.o : message.c message.h
 	gcc ${FLAGS} -c $<
 socket.o : socket.c socket.h
+	gcc ${FLAGS} -c $<
+sig_hand.o: sig_hand.c sig_hand.h
 	gcc ${FLAGS} -c $<
 
 clean:

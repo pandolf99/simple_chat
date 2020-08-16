@@ -38,47 +38,55 @@ int main(int argc, char *argv[]) {
 
     // Accept new connection.
     if (FD_ISSET(serverfd, &listen_fds)) {
-        int peerfd = accept_connection(serverfd);
-        if (peerfd > max_fd) {
-            max_fd = peerfd;
-        }
-				if (peerfd > 0) {
-					FD_SET(peerfd, &all_fds);
-				}
-				else {
-          perror("Server: Connecting");
-					exit(-1);
-        }
+      int peerfd = accept_connection(serverfd);
+      if (peerfd > max_fd) {
+          max_fd = peerfd;
+      }
+      if (peerfd > 0) {
+				FD_SET(peerfd, &all_fds);
+			}
+			else {
+        perror("Server: Connecting");
+				exit(-1);
+      }
     }
     //Iterate over clients
     for( int i = 3; i <= max_fd; i++) {
-    			if (i == serverfd) continue;
-    			if (FD_ISSET(i, &listen_fds)){
-            //Get size of message,
-            char size[5]; //Assume size is 4 digits or less
-            if (read(i, size, sizeof(char)*5) < 0){
-              perror("Server: Read:");
-              exit(-1);
-            }
-            int msg_size = strtol(size, NULL, 10);
-            //Read message
-            char msg[msg_size];
-    				if (read(i, msg, sizeof(char)*msg_size) < 0){
-    					perror("Server: Read:");
-    					exit(-1);
-    				}
-            //create final buf
-            char buf[msg_size + 5];
-            strcpy(buf, size);
-            strcpy(buf+5, msg);
-            //Relay to other clients
-            for( int j = 3; j <= max_fd; j++) {
-              if (j == serverfd || j == i) continue;
-              if (write(j, buf, sizeof(char)*(msg_size + 5)) <= 0) {
-                perror("Server: Write");
-              }
+      if (i == serverfd) continue;
+      if (FD_ISSET(i, &listen_fds)){
+        //Get size of message,
+        char size[5]; //Assume size is 4 digits or less
+        if (read(i, size, sizeof(char)*5) < 0){
+          perror("Server: Read:");
+          exit(-1);
+        }
+        //Check if need to close this client
+        if (strcmp(size, "CLOSE") == 0) {
+          close(i);
+          FD_CLR(i, &all_fds);
+          continue;
+        }
+        int msg_size = strtol(size, NULL, 10);
+        //Read message
+        char msg[msg_size];
+    		if (read(i, msg, sizeof(char)*msg_size) < 0){
+    		  perror("Server: Read:");
+    			exit(-1);
+    		}
+        //create final buf
+        char buf[msg_size + 5];
+        strcpy(buf, size);
+        strcpy(buf+5, msg);
+        //Relay to other clients
+        for( int j = 3; j <= max_fd; j++) {
+          if (j == serverfd || j == i) continue;
+          if FD_ISSET(j, &all_fds) {
+            if (write(j, buf, sizeof(char)*(msg_size + 5)) <= 0) {
+            perror("Server: Write");
             }
           }
+        }
+      }
     }
   }
 }

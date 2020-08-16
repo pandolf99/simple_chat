@@ -24,7 +24,7 @@ char *pack(char *usr, char *msg) {
     strncpy(size + 4, "|", 2);
   }
   else {
-      snprintf(size, 6, "%d|", len);
+    snprintf(size, 6, "%d|", len);
   }
   //pass new string
   char *packed = malloc(sizeof(char)*(len + 5));
