@@ -6,7 +6,7 @@ To use run the server first in the desired port (./server port).
 Then connect the desired clients (./client port [hostname]).
 If hostname is omitted, it will run in localhost.
 If using different networks you must port-forward in the router.
+To close a client session send a SIGINT signal (ctrl C)
 
 ## Bugs:
-There is no simple way for a client to exit yet. If the one of the clients close,
-behaviour is unknown. Still not tested in different networks. 
+Still not tested in different networks. Dont exit the server without first exiting clients. 
